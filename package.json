@@ -4,17 +4,27 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "start": "ts-node src/server.ts",
+    "test": "jest --forceExit",
+    "test:watch": "jest --watch",
+    "test:debug": "jest --detectOpenHandles"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
   "devDependencies": {
+    "@types/express": "^5.0.3",
     "@types/jest": "^30.0.0",
     "@types/node": "^24.1.0",
+    "@types/supertest": "^6.0.2",
     "jest": "^30.0.5",
+    "supertest": "^7.0.0",
+    "ts-jest": "^29.4.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
   }
 }
