@@ -14,7 +14,7 @@ const defaultKeyGenerator = (req: Request): string => {
 const defaultLimitHandler = (_req: Request, res: Response): void => {
   res.status(429).json({
     error: "Too Many Requests",
-    message: "Rate limit exceeded. Please try again later."
+    message: "Rate limit exceeded. Please try again later.",
   });
 };
 
@@ -25,18 +25,17 @@ export function createRateLimiterMiddleware(
   const {
     keyGenerator = defaultKeyGenerator,
     skip,
-    onLimitReached = defaultLimitHandler
+    onLimitReached = defaultLimitHandler,
   } = options;
 
-  // Sync Rate Limiter (Token Bucket 등)
-  if ('tryConsume' in limiter) {
+  if ("tryConsume" in limiter) {
     return (req: Request, res: Response, next: NextFunction) => {
       if (skip && skip(req)) {
         return next();
       }
 
       const key = keyGenerator(req);
-      
+
       try {
         limiter.tryConsume(key);
         next();
@@ -46,20 +45,19 @@ export function createRateLimiterMiddleware(
     };
   }
 
-  // Async Rate Limiter (Leaky Bucket 등)
-  return async (req: Request, res: Response, next: NextFunction) => {
+  return (req: Request, res: Response, next: NextFunction) => {
     if (skip && skip(req)) {
       return next();
     }
 
     const key = keyGenerator(req);
-    
-    try {
-      await limiter.enqueue(key, () => {
+
+    limiter
+      .enqueue(key, () => {
         next();
+      })
+      .catch(() => {
+        onLimitReached(req, res);
       });
-    } catch (error) {
-      onLimitReached(req, res);
-    }
   };
 }
