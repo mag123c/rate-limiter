@@ -1,4 +1,4 @@
-import { TokenBucketRateLimiter } from "./token-bucket";
+import { TokenBucketRateLimiter } from "../token-bucket";
 
 describe("Token Bucket", () => {
   it("토큰이 충분하면 에러가 발생하지 않음.", () => {

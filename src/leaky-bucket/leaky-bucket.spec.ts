@@ -1,10 +1,18 @@
 import { LeakyBucketRateLimiter } from "./leaky-bucket";
 
 describe("Leaky Bucket", () => {
+  let limiter: LeakyBucketRateLimiter;
+
+  afterEach(() => {
+    if (limiter) {
+      limiter.cleanup();
+    }
+  });
+
   it("초당 처리 개수만큼 올바르게 처리한다", async () => {
     jest.useFakeTimers();
 
-    const rateLimiter = new LeakyBucketRateLimiter({
+    limiter = new LeakyBucketRateLimiter({
       capacity: 100,
       leakRate: 5,
     });
@@ -12,7 +20,7 @@ describe("Leaky Bucket", () => {
     let processedCount = 0;
 
     for (let i = 0; i < 10; i++) {
-      await rateLimiter.enqueue("test", () => {
+      await limiter.enqueue("test", () => {
         processedCount++;
       });
     }
@@ -29,15 +37,15 @@ describe("Leaky Bucket", () => {
   });
 
   it("큐 용량을 초과하면 에러 발생", async () => {
-    const rateLimiter = new LeakyBucketRateLimiter({
+    limiter = new LeakyBucketRateLimiter({
       capacity: 2,
       leakRate: 1,
     });
 
-    await rateLimiter.enqueue("test", () => {});
-    await rateLimiter.enqueue("test", () => {});
+    await limiter.enqueue("test", () => {});
+    await limiter.enqueue("test", () => {});
 
-    await expect(rateLimiter.enqueue("test", () => {})).rejects.toThrow(
+    await expect(limiter.enqueue("test", () => {})).rejects.toThrow(
       "Rate Limit Exceed"
     );
   });
