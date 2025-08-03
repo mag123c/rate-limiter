@@ -1,4 +1,4 @@
-import { LeakyBucketRateLimiter } from "./leaky-bucket";
+import { LeakyBucketRateLimiter } from "../leaky-bucket";
 
 describe("Leaky Bucket", () => {
   let limiter: LeakyBucketRateLimiter;
