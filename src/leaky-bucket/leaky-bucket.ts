@@ -4,6 +4,7 @@ import { Queue } from "./queue";
 
 export class LeakyBucketRateLimiter implements AsyncRateLimiter {
   private buckets: Map<string, Queue<() => void>> = new Map();
+  private intervals: Map<string, NodeJS.Timeout> = new Map();
 
   constructor(private config: LeakyBucketConfig) {}
 
@@ -23,12 +24,20 @@ export class LeakyBucketRateLimiter implements AsyncRateLimiter {
   }
 
   private startProcessing(key: string) {
-    setInterval(() => {
+    const interval = setInterval(() => {
       const queue = this.buckets.get(key);
       if (queue && !queue.isEmpty()) {
         const callback = queue.poll();
         callback?.();
       }
     }, 1000 / this.config.leakRate);
+    
+    this.intervals.set(key, interval);
+  }
+
+  cleanup() {
+    this.intervals.forEach(interval => clearInterval(interval));
+    this.intervals.clear();
+    this.buckets.clear();
   }
 }
