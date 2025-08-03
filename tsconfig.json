@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    // 타입 안전성
+    "strict": true, // 모든 엄격한 타입 체크 활성화
+    "noImplicitAny": true, // any 타입 금지
+    "strictNullChecks": true, // null/undefined 체크
+    "strictFunctionTypes": true, // 함수 타입 엄격 체크
+
+    // 코드 품질
+    "noUnusedLocals": true, // 사용 안 한 지역 변수 에러
+    "noUnusedParameters": true, // 사용 안 한 매개변수 에러
+    "noImplicitReturns": true, // 모든 경로에서 반환 보장
+    "noFallthroughCasesInSwitch": true, // switch 문 fallthrough 방지
+
+    // 모듈 시스템
+    "module": "ES2022",
+    "target": "ES2022",
+    "moduleResolution": "node",
+
+    // 출력 설정
+    "outDir": "./dist",
+    "rootDir": "./",
+    "declaration": true, // .d.ts 파일 생성
+    "sourceMap": true,
+
+    // 기타
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": ["**/*.ts"],
+  "exclude": ["node_modules", "dist"]
+}
