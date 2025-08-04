@@ -3,7 +3,7 @@ import { RateLimiter } from "../rate-limiter";
 
 interface TokenBucket {
   token: number;
-  lastRequestTime: number; // 마지막 요청 unix
+  lastRefillTime: number; // 마지막 충전(요청) 시간 unix
 }
 
 export class TokenBucketRateLimiter implements RateLimiter {
@@ -13,7 +13,7 @@ export class TokenBucketRateLimiter implements RateLimiter {
 
   tryConsume(key: string): void {
     if (!this.hasEnoughTokens(key)) {
-      throw new Error("Rate Limit Exceed");
+      throw new Error(`Rate Limit Exceeded for key: ${key}`);
     }
     this.consumeTokens(key);
   }
@@ -32,24 +32,24 @@ export class TokenBucketRateLimiter implements RateLimiter {
   private consumeTokens(key: string) {
     const bucket = this.buckets.get(key)!;
     bucket.token -= this.config.consumePerRequest;
-    bucket.lastRequestTime = Date.now();
+    bucket.lastRefillTime = Date.now();
   }
 
   private refillTokens(bucket: TokenBucket) {
     const now = Date.now();
-    const elapsedMs = now - bucket.lastRequestTime;
+    const elapsedMs = now - bucket.lastRefillTime;
     const elapsedSeconds = elapsedMs / 1000;
 
     const tokensToAdd = elapsedSeconds * this.config.refillRate;
     bucket.token = Math.min(bucket.token + tokensToAdd, this.config.capacity);
 
-    bucket.lastRequestTime = now;
+    bucket.lastRefillTime = now;
   }
 
   private createBucket(key: string) {
     return this.buckets.set(key, {
       token: this.config.capacity,
-      lastRequestTime: 0,
+      lastRefillTime: 0,
     });
   }
 }
