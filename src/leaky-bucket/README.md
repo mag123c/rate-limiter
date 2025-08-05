@@ -1,6 +1,9 @@
 ### Leaky Bucket
 요청 처리율이 고정되어있는 비동기 리미터
 
+<img width="875" height="292" alt="image" src="https://github.com/user-attachments/assets/d4bba5af-5b14-470e-ae51-d60b7017f490" />
+
+
 특징:
 - 큐에 작업을 넣어놓고 처리율 만큼 주기 별로 처리하는 방식.
 - 큐의 크기를 제한해서 사용하고 고정된 처리율을 갖고 있기 때문에 튜닝해서 안정적인 처리가 가능함.
