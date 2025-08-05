@@ -22,12 +22,14 @@ describe("Fixed Window", () => {
 
     jest.useFakeTimers();
 
+    // 첫 번째 윈도우
     expect(() => rateLimiter.tryConsume("user1")).not.toThrow();
     expect(() => rateLimiter.tryConsume("user1")).not.toThrow();
     expect(() => rateLimiter.tryConsume("user1")).not.toThrow();
 
     jest.advanceTimersByTime(6000);
 
+    // 두 번째 윈도우
     expect(() => rateLimiter.tryConsume("user1")).not.toThrow();
     expect(() => rateLimiter.tryConsume("user1")).not.toThrow();
     expect(() => rateLimiter.tryConsume("user1")).not.toThrow();
@@ -50,5 +52,33 @@ describe("Fixed Window", () => {
 
     expect(() => rateLimiter.tryConsume("user1")).toThrow();
     expect(() => rateLimiter.tryConsume("user2")).toThrow();
+  });
+
+  it("윈도우 경계 부근에서 예상치 못하게 많은 양의 트래픽이 처리될 수 있다.", () => {
+    // Fixed Window 알고리즘의 핵심 단점을 보여주는 테스트
+    // 윈도우 전환 시점에 burst traffic 발생 가능
+    const rateLimiter = new FixedWindowRateLimiter({
+      threshold: 100,
+      windowSizeMs: 60000, // 1min
+    });
+
+    jest.useFakeTimers();
+
+    // 첫 번째 윈도우
+    for (let i = 0; i < 100; i++) {
+      expect(() => rateLimiter.tryConsume("user1")).not.toThrow();
+    }
+    jest.advanceTimersByTime(59000);
+    expect(() => rateLimiter.tryConsume("user1")).toThrow();
+
+    jest.advanceTimersByTime(1000);
+
+    // 두 번째 윈도우
+    for (let i = 0; i < 100; i++) {
+      expect(() => rateLimiter.tryConsume("user1")).not.toThrow();
+    }
+    expect(() => rateLimiter.tryConsume("user1")).toThrow();
+
+    jest.useRealTimers();
   });
 });
