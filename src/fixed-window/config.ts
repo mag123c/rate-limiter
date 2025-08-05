@@ -1,10 +1,10 @@
+import { WindowConfig } from "../config/window-config.js";
+
 type FixedWindowClearConfig = {
   callCount: number;
   maxCount: number;
 };
 
-export interface FixedWindowConfig {
-  threshold: number; // 윈도우 임계치
-  windowSizeMs: number; // 윈도우 크기
+export interface FixedWindowConfig extends WindowConfig {
   clearConfig?: FixedWindowClearConfig;
 }
