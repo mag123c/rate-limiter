@@ -3,9 +3,7 @@ import { createApp } from "../../app";
 import { createLeakyBucketMiddleware } from "../middleware";
 
 describe("Leaky Bucket Rate Limiter Integration", () => {
-  // 각 테스트 후 Leaky Bucket의 interval 정리를 위한 cleanup
   afterEach(() => {
-    // Jest의 타이머를 리셋하여 interval 정리
     jest.clearAllTimers();
   });
 

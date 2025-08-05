@@ -6,28 +6,20 @@ type FixedWindow = {
   windowStart: number;
 };
 
-type FixedWindowClearConfig = {
-  callCount: number;
-  maxCount: number;
-};
-
 export class FixedWindowRateLimiter implements RateLimiter {
   private windows: Map<string, FixedWindow> = new Map();
 
-  constructor(
-    private config: FixedWindowConfig,
-    private clearConfig?: FixedWindowClearConfig
-  ) {}
+  constructor(private config: FixedWindowConfig) {}
 
   tryConsume(key: string): void {
     // 랜덤으로 TTL기반 삭제
     if (
-      this.clearConfig?.callCount &&
-      this.clearConfig?.maxCount &&
-      this.clearConfig.callCount >= this.clearConfig.maxCount
+      this.config.clearConfig?.callCount &&
+      this.config.clearConfig?.maxCount &&
+      this.config.clearConfig.callCount >= this.config.clearConfig.maxCount
     ) {
       this.cleanupExpiredWindows();
-      this.clearConfig.callCount++;
+      this.config.clearConfig.callCount++;
     }
 
     if (!this.canConsumeRequest(key)) {
