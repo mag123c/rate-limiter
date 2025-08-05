@@ -1,10 +1,10 @@
 import { TokenBucketConfig } from "./config";
 import { RateLimiter } from "../rate-limiter";
 
-interface TokenBucket {
+type TokenBucket = {
   token: number;
   lastRefillTime: number; // 마지막 충전(요청) 시간 unix
-}
+};
 
 export class TokenBucketRateLimiter implements RateLimiter {
   private buckets: Map<string, TokenBucket> = new Map();
