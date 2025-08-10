@@ -61,9 +61,14 @@ export class SlidingWindowCounterRateLimiter implements RateLimiter {
     let rate = currentWindow.count + 1;
 
     if (previousWindow && previousWindow.windowStart === previousWindowStart) {
-      const elapsedInCurrentWindow = (now - currentWindowStart) / this.config.windowSizeMs;
-      const previousWindowWeight = 1 - elapsedInCurrentWindow;
-      rate = Math.floor(previousWindow.count * previousWindowWeight) + currentWindow.count + 1;
+      // 현재 윈도우에서 경과한 시간
+      const elapsedInCurrentWindow = now - currentWindowStart;
+      // 이전 윈도우와 겹치는 시간
+      const overlapTime = this.config.windowSizeMs - elapsedInCurrentWindow;
+      // 이전 윈도우와 겹치는 비율
+      const overlapRatio = overlapTime / this.config.windowSizeMs;
+      // 슬라이딩 윈도우 카운터 공식: 현재 윈도우 + (이전 윈도우 × 겹치는 비율)
+      rate = currentWindow.count + 1 + Math.floor(previousWindow.count * overlapRatio);
     }
 
     return rate;
