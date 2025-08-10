@@ -12,7 +12,6 @@ export class FixedWindowRateLimiter implements RateLimiter {
   constructor(private config: FixedWindowConfig) {}
 
   tryConsume(key: string): void {
-    // 랜덤으로 TTL기반 삭제
     if (
       this.config.clearConfig?.callCount &&
       this.config.clearConfig?.maxCount &&
